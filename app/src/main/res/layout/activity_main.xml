@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_browse_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.MainActivity"
+    tools:deviceIds="tv"
+    tools:ignore="MergeRootFrame"
+    android:background="#c9c9c9">
+
+    <TextView
+        android:id="@+id/appTitleTV"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:textAlignment="center"
+        android:text="Welcome to TvLights!">
+    </TextView>
+
+    <ImageView
+        android:id="@+id/appLogoIV"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/tvlights_logo">
+    </ImageView>
+
+    <Button
+        android:id="@+id/ledsColorBT"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:backgroundTint="#a8a8a7"
+        android:text="COLOR">
+    </Button>
+
+    <Button
+        android:id="@+id/appSettingsBT"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:backgroundTint="#a8a8a7"
+        android:text="SETTINGS">
+    </Button>
+
+    <RelativeLayout
+        android:id="@+id/exitView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:background="#9d9fa3"
+        android:translationZ="2dp">
+
+        <TextView
+            android:id="@+id/exitTitleTV"
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="Do you want to close TvLights?"
+            android:background="#000000">
+        </TextView>
+
+        <TextView
+            android:id="@+id/exitInfoTV"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="if you click 'OK' TvLights will be closed."
+            android:background="#9d9fa3">
+        </TextView>
+
+        <Button
+            android:id="@+id/confirmBT"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="OK"
+            android:backgroundTint="#a8a8a7">
+        </Button>
+
+        <Button
+            android:id="@+id/cancelBT"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="CANCEL"
+            android:backgroundTint="#a8a8a7">
+        </Button>
+
+    </RelativeLayout>
+
+</RelativeLayout>
+

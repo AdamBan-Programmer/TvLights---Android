@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.ColorPickActivity"
+    android:background="#c9c9c9">
+
+    <TextView
+        android:id="@+id/titleTV"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:text="Select color:"
+        />
+
+    <TextView
+        android:id="@+id/pickedColorTV"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="color: FFFFFF."
+        />
+
+    <ImageView
+        android:id="@+id/colorPickerIV"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/color_picker"
+        />
+
+    <View
+        android:id="@+id/colorPreview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        />
+
+    <Button
+        android:id="@+id/offLedsBT"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:backgroundTint="#a8a8a7"
+        android:text="OFF">
+    </Button>
+
+</RelativeLayout>

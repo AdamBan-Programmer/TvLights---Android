@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.AppSettingsActivity"
+    android:background="#c9c9c9">
+
+    <TextView
+        android:id="@+id/titleBarTV"
+        android:textColor="#FFFFFF"
+        android:background="#000000"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="Settings"
+        android:translationZ="10dp"
+        />
+
+    <TextView
+        android:id="@+id/ipAddressTV"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="IP Address: "
+        />
+
+    <EditText
+        android:id="@+id/ipAddressET"
+        android:digits = "1234567890."
+        android:singleLine="true"
+        android:inputType="number"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        />
+
+    <TextView
+        android:id="@+id/portTV"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="port: "
+        />
+
+    <EditText
+        android:id="@+id/portET"
+        android:digits = "1234567890."
+        android:singleLine="true"
+        android:inputType="number"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        />
+
+    <Button
+        android:id="@+id/saveBT"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="Save"
+        android:backgroundTint="#a8a8a7"
+        android:textSize="15dp"/>
+
+</RelativeLayout>
