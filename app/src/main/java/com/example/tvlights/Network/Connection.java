@@ -2,7 +2,6 @@ package com.example.tvlights.Network;
 
 import com.example.tvlights.Settings.AppSettings;
 import com.example.tvlights.Utils.JsonParser;
-import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -14,22 +13,21 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class Connection extends Client implements Serializable {
+import lombok.Getter;
+import lombok.Setter;
 
-    AppSettings appSettingsController = new AppSettings();
-    JsonParser jsonController = new JsonParser();
+public final class Connection extends Client implements Serializable {
+
+    static JsonParser jsonController = new JsonParser();
 
     private Socket clientSocket;
     private PrintWriter outputStream;
     private BufferedReader inputStream;
     private boolean connectionStatus;
 
-    private static Connection currentConnection = null;
+    private static Connection currentConnection;
 
-    public Connection() {
-    }
-
-    public Connection(String ipAddress, int port, Socket clientSocket, PrintWriter outputStream, BufferedReader inputStream, boolean connectionStatus) {
+    private Connection(String ipAddress, int port, Socket clientSocket, PrintWriter outputStream, BufferedReader inputStream, boolean connectionStatus) {
         super(ipAddress, port);
         this.clientSocket = clientSocket;
         this.outputStream = outputStream;
@@ -37,18 +35,21 @@ public class Connection extends Client implements Serializable {
         this.connectionStatus = connectionStatus;
     }
 
-    public void startConnection() throws InterruptedException {
+    public static void startConnection() throws InterruptedException {
         Thread thread = new Thread() {
             public void run() {
                 try {
                     if (currentConnection == null) {
-                        getCurrentConnection().setClientSocket(
-                                new Socket(currentConnection.getIpAddress(), currentConnection.getPort()));
-                        getCurrentConnection().setOutputStream(
+                        String ip = AppSettings.getInstance().getClientAddress().getIpAddress();
+                        int port = AppSettings.getInstance().getClientAddress().getPort();
+
+                        getInstance().setClientSocket(
+                                new Socket(ip, port));
+                        getInstance().setOutputStream(
                                 new PrintWriter(currentConnection.getClientSocket().getOutputStream(), true));
-                        getCurrentConnection().setInputStream(
+                        getInstance().setInputStream(
                                 new BufferedReader(new InputStreamReader(currentConnection.getClientSocket().getInputStream())));
-                        getCurrentConnection().setConnectionStatus(true);
+                        getInstance().setConnectionStatus(true);
                     }
                 }catch (IOException e)
                 {
@@ -60,7 +61,7 @@ public class Connection extends Client implements Serializable {
         thread.join(1000);
     }
 
-    public boolean connectionIsAvailable() throws NullPointerException, InterruptedException, SocketException {
+    public static boolean connectionIsAvailable() throws NullPointerException, InterruptedException, SocketException {
         boolean connectionNotSet =
                 currentConnection == null ||
                 currentConnection.getInputStream() == null ||
@@ -71,7 +72,7 @@ public class Connection extends Client implements Serializable {
             startConnection();
         }
         checkSocketStatus();
-        if(!getCurrentConnection().getConnectionStatus())
+        if(!getInstance().getConnectionStatus())
         {
             stopConnection();
             throw new SocketException();
@@ -80,14 +81,14 @@ public class Connection extends Client implements Serializable {
     }
 
     //trying to read data from socket, if error occurred it means the connection is closed
-    private void checkSocketStatus() {
+    private static void checkSocketStatus() {
         Thread thread = new Thread() {
             public void run() {
                 try {
                     DataInputStream dis = new DataInputStream(currentConnection.getClientSocket().getInputStream());
                     dis.read();
                 } catch (SocketException e) {
-                    getCurrentConnection().setConnectionStatus(false);
+                    getInstance().setConnectionStatus(false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -97,7 +98,7 @@ public class Connection extends Client implements Serializable {
     }
 
     //to leds controller (raspberry pi)
-    public void sendLedsColor(String json) {
+    public static void sendLedsColor(String json) {
         Thread thread = new Thread() {
             public void run() {
                 try {
@@ -113,7 +114,7 @@ public class Connection extends Client implements Serializable {
     }
 
     //sends 'close' to leds controller
-    private void sendDisconnectMessage(String disconnectJSON) throws InterruptedException {
+    private static void sendDisconnectMessage(String disconnectJSON) throws InterruptedException {
         Thread thread = new Thread() {
             public void run() {
                 try {
@@ -129,7 +130,7 @@ public class Connection extends Client implements Serializable {
         thread.join();
     }
 
-    public void stopConnection(){
+    public static void stopConnection(){
         try {
             String disconnectJSON = prepareDisconnectData();
             sendDisconnectMessage(disconnectJSON);
@@ -146,18 +147,16 @@ public class Connection extends Client implements Serializable {
         }
     }
 
-    private String prepareDisconnectData()
+    private static String prepareDisconnectData()
     {
         String closeString = "close";
         return jsonController.toJsonFormat(closeString);
     }
 
-    public Connection getCurrentConnection() {
+    public static Connection getInstance() {
         if(currentConnection == null)
         {
-            String ipAddress = appSettingsController.getCurrentAppSettings().getClientAddress().getIpAddress();
-            int port = appSettingsController.getCurrentAppSettings().getClientAddress().getPort();
-            currentConnection = new Connection(ipAddress,port,null,null,null,false);
+            currentConnection = new Connection("",0,null,null,null,false);
         }
         return currentConnection;
     }

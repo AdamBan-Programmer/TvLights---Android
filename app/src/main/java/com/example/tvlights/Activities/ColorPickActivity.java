@@ -24,7 +24,6 @@ import java.io.IOException;
 public class ColorPickActivity extends AppCompatActivity implements ActivityBuildInterface, View.OnClickListener,View.OnTouchListener {
 
     ScaleLayouts scallingController = new ScaleLayouts();
-    Connection connectionController = new Connection();
     JsonParser jsonParser = new JsonParser();
 
     TextView pickedColorTV,titleTV;
@@ -67,13 +66,13 @@ public class ColorPickActivity extends AppCompatActivity implements ActivityBuil
     }
 
     public void onStop() {
-        connectionController.stopConnection();
+        Connection.stopConnection();
         Toast.makeText(this, "connection closed.", Toast.LENGTH_LONG).show();
         super.onStop();
     }
 
     public void onDestroy() {
-        connectionController.stopConnection();
+        Connection.stopConnection();
         Toast.makeText(this, "connection closed.", Toast.LENGTH_LONG).show();
         super.onDestroy();
     }
@@ -82,7 +81,7 @@ public class ColorPickActivity extends AppCompatActivity implements ActivityBuil
     public boolean onTouch(View v, MotionEvent event) {
 
         try {
-            if (connectionController.connectionIsAvailable()) {
+            if (Connection.connectionIsAvailable()) {
                 Bitmap bmp = ((BitmapDrawable) colorPickerIV.getDrawable()).getBitmap();
                 Bitmap scaled = BitmapModifier.resizeBitmap(bmp, colorPickerIV.getMeasuredHeight(), colorPickerIV.getMeasuredWidth());
 
@@ -90,7 +89,7 @@ public class ColorPickActivity extends AppCompatActivity implements ActivityBuil
                 String colorHex = "#" + Integer.toHexString(pixels).substring(2);
                 String colorJSON = jsonParser.toJsonFormat(colorHex);
                 updateActivity(colorHex);
-                connectionController.sendLedsColor(colorJSON);
+                Connection.sendLedsColor(colorJSON);
             }
         } catch (IOException | InterruptedException e) {
             Toast.makeText(this, "connection failed.", Toast.LENGTH_LONG).show();
@@ -111,9 +110,9 @@ public class ColorPickActivity extends AppCompatActivity implements ActivityBuil
         //off leds = set black color
         if (id == offLedsBT.getId()) {
             try {
-                if (connectionController.connectionIsAvailable()) {
+                if (Connection.connectionIsAvailable()) {
                     String blackColor = jsonParser.toJsonFormat("#000000");
-                    connectionController.sendLedsColor(blackColor);
+                    Connection.sendLedsColor(blackColor);
                     updateActivity("#000000");
                 }
             } catch (IOException | InterruptedException e) {

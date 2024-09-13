@@ -17,7 +17,6 @@ import com.example.tvlights.Utils.ScaleLayouts;
 
 public class MainActivity extends Activity implements ActivityBuildInterface,View.OnClickListener {
     ScaleLayouts scaleLayoutsController = new ScaleLayouts();
-    Connection connectionController = new Connection();
     MemoryOperations memoryContorller = new MemoryOperations();
 
 
@@ -37,7 +36,7 @@ public class MainActivity extends Activity implements ActivityBuildInterface,Vie
 
         try {
             memoryContorller.ReadSerializedObject();
-            connectionController.startConnection();
+            Connection.startConnection();
         }
         catch (InterruptedException e) {
             Toast.makeText(this,"Couldn't connect to ledStrip controller.", Toast.LENGTH_LONG).show();
@@ -89,7 +88,7 @@ public class MainActivity extends Activity implements ActivityBuildInterface,Vie
     }
 
     public void onDestroy() {
-        connectionController.stopConnection();
+        Connection.stopConnection();
         super.onDestroy();
     }
 

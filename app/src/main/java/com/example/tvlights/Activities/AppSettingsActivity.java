@@ -26,7 +26,6 @@ import com.example.tvlights.Utils.ScaleLayouts;
 public class AppSettingsActivity extends Activity implements ActivityBuildInterface,View.OnClickListener {
 
     MemoryOperations memoryController = new MemoryOperations();
-    AppSettings appSettingsController = new AppSettings();
     ScaleLayouts scallingController = new ScaleLayouts();
 
     private static final int PERMISSION_REQUEST_CODE = 111;
@@ -110,13 +109,14 @@ public class AppSettingsActivity extends Activity implements ActivityBuildInterf
 
     //into controls
     private void setSettingsValues() {
-        ipAddressET.setText(String.valueOf(appSettingsController.getCurrentAppSettings().getClientAddress().getIpAddress()));
-        portET.setText(String.valueOf(appSettingsController.getCurrentAppSettings().getClientAddress().getPort()));
+        AppSettings settings = AppSettings.getInstance();
+        ipAddressET.setText(String.valueOf(settings.getClientAddress().getIpAddress()));
+        portET.setText(String.valueOf(settings.getClientAddress().getPort()));
     }
 
     private void saveSettings() throws Exception {
         getSettingsValues();
-        AppSettings settings = appSettingsController.getCurrentAppSettings();
+        AppSettings settings = AppSettings.getInstance();
         memoryController.SerializeObjectToFile(settings);
         Toast.makeText(getApplicationContext(), "Settings Updated Succesfully!", Toast.LENGTH_SHORT).show();
     }
@@ -124,7 +124,8 @@ public class AppSettingsActivity extends Activity implements ActivityBuildInterf
     //from controls
     private void getSettingsValues()
     {
-        appSettingsController.getCurrentAppSettings().getClientAddress().setIpAddress(ipAddressET.getText().toString());
-        appSettingsController.getCurrentAppSettings().getClientAddress().setPort(Integer.parseInt(portET.getText().toString()));
+        AppSettings settings = AppSettings.getInstance();
+        settings.getClientAddress().setIpAddress(ipAddressET.getText().toString());
+        settings.getClientAddress().setPort(Integer.parseInt(portET.getText().toString()));
     }
 }

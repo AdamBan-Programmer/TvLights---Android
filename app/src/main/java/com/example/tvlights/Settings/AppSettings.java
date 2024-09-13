@@ -5,28 +5,18 @@ import com.example.tvlights.Network.Client;
 
 import java.io.Serializable;
 
-public class AppSettings implements Serializable {
+public final class AppSettings implements Serializable {
 
     private Client clientAddress;
 
-    static AppSettings currentAppSettings = null;
+    private static AppSettings currentAppSettings;
 
-    public AppSettings()
-    {
-
-    }
-
-    public AppSettings(Client clientAddress) {
+    private AppSettings(Client clientAddress) {
         this.clientAddress = clientAddress;
     }
 
     //singleton
-    public void setCurrentAppSettings(AppSettings newSettings)
-    {
-        currentAppSettings = newSettings;
-    }
-
-    public AppSettings getCurrentAppSettings()
+    public static AppSettings getInstance()
     {
         if(currentAppSettings == null)
         {
@@ -35,12 +25,14 @@ public class AppSettings implements Serializable {
         return currentAppSettings;
     }
 
+    public static void updateAppSettings(AppSettings newSettings)
+    {
+        currentAppSettings = newSettings;
+    }
+
     public Client getClientAddress() {
         return this.clientAddress;
     }
 
-    public void setClientAddress(Client clientAddress) {
-        this.clientAddress = clientAddress;
-    }
 }
 

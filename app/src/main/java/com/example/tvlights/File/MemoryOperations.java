@@ -16,7 +16,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class MemoryOperations {
 
-    AppSettings settingsController = new AppSettings();
     FileScanner fileScannerController = new FileScanner();
     FileEncryption encryptionController = new FileEncryption();
 
@@ -38,6 +37,6 @@ public class MemoryOperations {
             CipherInputStream cipherInputStream = new CipherInputStream(istream, cipher);
             ObjectInputStream inputStream = new ObjectInputStream(cipherInputStream);
             SealedObject sealedObject = (SealedObject) inputStream.readObject();
-            settingsController.setCurrentAppSettings((AppSettings) sealedObject.getObject(cipher));
+            AppSettings.updateAppSettings((AppSettings) sealedObject.getObject(cipher));
     }
 }
