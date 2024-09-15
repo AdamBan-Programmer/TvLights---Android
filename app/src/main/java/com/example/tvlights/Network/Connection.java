@@ -13,20 +13,15 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.net.SocketException;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public final class Connection extends Client implements Serializable {
 
     static JsonParser jsonController = new JsonParser();
 
+    private static Connection instance;
     private Socket clientSocket;
     private PrintWriter outputStream;
     private BufferedReader inputStream;
     private boolean connectionStatus;
-
-    private static Connection currentConnection;
-
     private Connection(String ipAddress, int port, Socket clientSocket, PrintWriter outputStream, BufferedReader inputStream, boolean connectionStatus) {
         super(ipAddress, port);
         this.clientSocket = clientSocket;
@@ -39,16 +34,16 @@ public final class Connection extends Client implements Serializable {
         Thread thread = new Thread() {
             public void run() {
                 try {
-                    if (currentConnection == null) {
+                    if (instance == null) {
                         String ip = AppSettings.getInstance().getClientAddress().getIpAddress();
                         int port = AppSettings.getInstance().getClientAddress().getPort();
 
                         getInstance().setClientSocket(
                                 new Socket(ip, port));
                         getInstance().setOutputStream(
-                                new PrintWriter(currentConnection.getClientSocket().getOutputStream(), true));
+                                new PrintWriter(instance.getClientSocket().getOutputStream(), true));
                         getInstance().setInputStream(
-                                new BufferedReader(new InputStreamReader(currentConnection.getClientSocket().getInputStream())));
+                                new BufferedReader(new InputStreamReader(instance.getClientSocket().getInputStream())));
                         getInstance().setConnectionStatus(true);
                     }
                 }catch (IOException e)
@@ -63,10 +58,10 @@ public final class Connection extends Client implements Serializable {
 
     public static boolean connectionIsAvailable() throws NullPointerException, InterruptedException, SocketException {
         boolean connectionNotSet =
-                currentConnection == null ||
-                currentConnection.getInputStream() == null ||
-                        currentConnection.getOutputStream() == null ||
-                        currentConnection.getClientSocket() == null;
+                instance == null ||
+                instance.getInputStream() == null ||
+                        instance.getOutputStream() == null ||
+                        instance.getClientSocket() == null;
 
         if (connectionNotSet) {
             startConnection();
@@ -85,7 +80,7 @@ public final class Connection extends Client implements Serializable {
         Thread thread = new Thread() {
             public void run() {
                 try {
-                    DataInputStream dis = new DataInputStream(currentConnection.getClientSocket().getInputStream());
+                    DataInputStream dis = new DataInputStream(instance.getClientSocket().getInputStream());
                     dis.read();
                 } catch (SocketException e) {
                     getInstance().setConnectionStatus(false);
@@ -102,7 +97,7 @@ public final class Connection extends Client implements Serializable {
         Thread thread = new Thread() {
             public void run() {
                 try {
-                    DataOutputStream outputStream = new DataOutputStream(currentConnection.getClientSocket().getOutputStream());
+                    DataOutputStream outputStream = new DataOutputStream(instance.getClientSocket().getOutputStream());
                     outputStream.write(json.getBytes());
                     outputStream.flush();
                 } catch (Exception e) {
@@ -118,7 +113,7 @@ public final class Connection extends Client implements Serializable {
         Thread thread = new Thread() {
             public void run() {
                 try {
-                    DataOutputStream outputStream = new DataOutputStream(currentConnection.getClientSocket().getOutputStream());
+                    DataOutputStream outputStream = new DataOutputStream(instance.getClientSocket().getOutputStream());
                     outputStream.write(disconnectJSON.getBytes());
                     outputStream.flush();
                 } catch (Exception e) {
@@ -134,16 +129,16 @@ public final class Connection extends Client implements Serializable {
         try {
             String disconnectJSON = prepareDisconnectData();
             sendDisconnectMessage(disconnectJSON);
-            currentConnection.getInputStream().close();
-            currentConnection.getOutputStream().close();
-            currentConnection.getClientSocket().close();
+            instance.getInputStream().close();
+            instance.getOutputStream().close();
+            instance.getClientSocket().close();
         }
         catch (IOException | NullPointerException | InterruptedException e)
         {
             e.printStackTrace();
         }
         finally {
-            currentConnection = null;
+            instance = null;
         }
     }
 
@@ -154,15 +149,15 @@ public final class Connection extends Client implements Serializable {
     }
 
     public static Connection getInstance() {
-        if(currentConnection == null)
+        if(instance == null)
         {
-            currentConnection = new Connection("",0,null,null,null,false);
+            instance = new Connection("",0,null,null,null,false);
         }
-        return currentConnection;
+        return instance;
     }
 
     public void setCurrentConnection(Connection newCurrentConnection) {
-        currentConnection = newCurrentConnection;
+        instance = newCurrentConnection;
     }
 
     public Socket getClientSocket() {

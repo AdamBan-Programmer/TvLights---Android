@@ -7,10 +7,8 @@ import java.io.Serializable;
 
 public final class AppSettings implements Serializable {
 
+    private static AppSettings instance;
     private Client clientAddress;
-
-    private static AppSettings currentAppSettings;
-
     private AppSettings(Client clientAddress) {
         this.clientAddress = clientAddress;
     }
@@ -18,16 +16,16 @@ public final class AppSettings implements Serializable {
     //singleton
     public static AppSettings getInstance()
     {
-        if(currentAppSettings == null)
+        if(instance == null)
         {
-            currentAppSettings = new AppSettings(new Client("192.168.0.127",0));
+            instance = new AppSettings(new Client("192.168.0.127",0));
         }
-        return currentAppSettings;
+        return instance;
     }
 
     public static void updateAppSettings(AppSettings newSettings)
     {
-        currentAppSettings = newSettings;
+        instance = newSettings;
     }
 
     public Client getClientAddress() {
