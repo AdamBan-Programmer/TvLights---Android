@@ -9,16 +9,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tvlights.File.FileScanner;
 import com.example.tvlights.Network.Connection;
 import com.example.tvlights.File.MemoryOperations;
 import com.example.tvlights.R;
+import com.example.tvlights.Service.ConnectionService;
 import com.example.tvlights.Utils.JsonParser;
 import com.example.tvlights.Utils.ScaleLayouts;
 
 public class MainActivity extends Activity implements ActivityBuildInterface,View.OnClickListener {
     ScaleLayouts scaleLayoutsController = new ScaleLayouts();
     MemoryOperations memoryContorller = new MemoryOperations();
-
+    ConnectionService connectionService = new ConnectionService();
+    FileScanner fileScannerController = new FileScanner();
 
     private View exitView;
     private TextView exitTitleTV,exitInfoTV,appTitleTV;
@@ -35,8 +38,9 @@ public class MainActivity extends Activity implements ActivityBuildInterface,Vie
         setControlsToListeners();
 
         try {
+            fileScannerController.checkSettingsFolderExists();
             memoryContorller.ReadSerializedObject();
-            Connection.startConnection();
+            connectionService.startConnection();
         }
         catch (InterruptedException e) {
             Toast.makeText(this,"Couldn't connect to ledStrip controller.", Toast.LENGTH_LONG).show();
@@ -88,7 +92,7 @@ public class MainActivity extends Activity implements ActivityBuildInterface,Vie
     }
 
     public void onDestroy() {
-        Connection.stopConnection();
+        connectionService.stopConnection();
         super.onDestroy();
     }
 

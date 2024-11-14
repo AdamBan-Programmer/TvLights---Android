@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tvlights.Service.ConnectionService;
 import com.example.tvlights.Utils.BitmapModifier;
 import com.example.tvlights.Network.Connection;
 import com.example.tvlights.Utils.JsonParser;
@@ -25,6 +26,7 @@ public class ColorPickActivity extends AppCompatActivity implements ActivityBuil
 
     ScaleLayouts scallingController = new ScaleLayouts();
     JsonParser jsonParser = new JsonParser();
+    ConnectionService connectionService = new ConnectionService();
 
     TextView pickedColorTV,titleTV;
     ImageView colorPickerIV;
@@ -66,14 +68,12 @@ public class ColorPickActivity extends AppCompatActivity implements ActivityBuil
     }
 
     public void onStop() {
-        Connection.stopConnection();
-        Toast.makeText(this, "connection closed.", Toast.LENGTH_LONG).show();
+        connectionService.stopConnection();
         super.onStop();
     }
 
     public void onDestroy() {
-        Connection.stopConnection();
-        Toast.makeText(this, "connection closed.", Toast.LENGTH_LONG).show();
+        connectionService.stopConnection();
         super.onDestroy();
     }
 
@@ -81,18 +81,16 @@ public class ColorPickActivity extends AppCompatActivity implements ActivityBuil
     public boolean onTouch(View v, MotionEvent event) {
 
         try {
-            if (Connection.connectionIsAvailable()) {
-                Bitmap bmp = ((BitmapDrawable) colorPickerIV.getDrawable()).getBitmap();
-                Bitmap scaled = BitmapModifier.resizeBitmap(bmp, colorPickerIV.getMeasuredHeight(), colorPickerIV.getMeasuredWidth());
+            Bitmap bmp = ((BitmapDrawable) colorPickerIV.getDrawable()).getBitmap();
+            Bitmap scaled = BitmapModifier.resizeBitmap(bmp, colorPickerIV.getMeasuredHeight(), colorPickerIV.getMeasuredWidth());
 
-                int pixels = scaled.getPixel((int) event.getX(), (int) event.getY());
-                String colorHex = "#" + Integer.toHexString(pixels).substring(2);
-                String colorJSON = jsonParser.toJsonFormat(colorHex);
-                updateActivity(colorHex);
-                Connection.sendLedsColor(colorJSON);
-            }
-        } catch (IOException | InterruptedException e) {
-            Toast.makeText(this, "connection failed.", Toast.LENGTH_LONG).show();
+            int pixels = scaled.getPixel((int) event.getX(), (int) event.getY());
+            String colorHex = "#" + Integer.toHexString(pixels).substring(2);
+            String colorJSON = jsonParser.toJsonFormat(colorHex);
+            connectionService.sendLedsColor(colorJSON);
+            updateActivity(colorHex);
+        } catch (Exception e) {
+            System.out.println("touch error");
         }
         return false;
     }
@@ -109,15 +107,9 @@ public class ColorPickActivity extends AppCompatActivity implements ActivityBuil
 
         //off leds = set black color
         if (id == offLedsBT.getId()) {
-            try {
-                if (Connection.connectionIsAvailable()) {
-                    String blackColor = jsonParser.toJsonFormat("#000000");
-                    Connection.sendLedsColor(blackColor);
-                    updateActivity("#000000");
-                }
-            } catch (IOException | InterruptedException e) {
-                Toast.makeText(this, "connection failed.", Toast.LENGTH_LONG).show();
-            }
+            String blackColor = jsonParser.toJsonFormat("#000000");
+            connectionService.sendLedsColor(blackColor);
+            updateActivity("#000000");
         }
     }
 }
